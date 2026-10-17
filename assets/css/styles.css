@@ -4060,3 +4060,139 @@ textarea.form-control {
     gap: 12px;
   }
 }
+
+
+/* ==========================================================================
+   HIGH CONTRAST HEADINGS: Force pure white headings inside dark CTA blocks
+   ========================================================================== */
+.cta-box h1,
+.cta-box h2,
+.cta-box h3,
+.cta-box h4,
+.cta-section h1,
+.cta-section h2,
+.cta-section h3,
+.cta-section h4,
+.dark-banner h1,
+.dark-banner h2,
+.dark-banner h3,
+.dark-banner h4,
+[class*="cta-box"] h1,
+[class*="cta-box"] h2,
+[class*="cta-box"] h3,
+[class*="cta-box"] h4,
+[class*="cta"] h2,
+[class*="cta"] h3,
+.cta-title {
+  color: #ffffff !important;
+}
+
+.cta-box p,
+.cta-section p,
+.dark-banner p,
+[class*="cta-box"] p {
+  color: #cbd5e1 !important;
+}
+
+/* ==========================================================================
+   SERVICE CARDS: Explicit dark typography and clean contrast on white cards
+   ========================================================================== */
+.service-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.service-card-title,
+.service-card-title a,
+.service-card h3,
+.service-card h3 a,
+.service-card h4,
+.service-card h4 a {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+  text-decoration: none !important;
+}
+
+.service-card-title a:hover,
+.service-card h3 a:hover {
+  color: #059669 !important;
+}
+
+.service-card-desc,
+.service-card p {
+  color: #475569 !important;
+  line-height: 1.65 !important;
+}
+
+/* Mega-Menu & Tabs Contextual Overrides */
+.mega-menu .service-card,
+.mega-tab-panel .service-card,
+#desktopMegaMenu .service-card {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+.mega-menu .service-card-title,
+.mega-menu .service-card-title a,
+.mega-tab-panel .service-card-title,
+.mega-tab-panel .service-card-title a {
+  color: #0f172a !important;
+}
+
+.mega-menu .service-card-desc,
+.mega-tab-panel .service-card-desc {
+  color: #475569 !important;
+}
+
+/* ==========================================================================
+   MOBILE VIEWPORT ORDERING (Text & CTAs First — Flex Column Enforced)
+   ========================================================================== */
+@media (max-width: 991px) {
+  .hero-grid,
+  .brand-hero-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 24px !important;
+    direction: rtl !important;
+  }
+
+  .hero-content,
+  .brand-hero-text {
+    order: 1 !important;
+  }
+
+  .hero-visual,
+  .brand-hero-visual {
+    order: 2 !important;
+    margin-top: 12px !important;
+  }
+
+  .service-visual-grid,
+  .service-visual-grid.reverse {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+    direction: rtl !important;
+  }
+
+  .service-visual-info {
+    order: 1 !important;
+  }
+
+  .service-visual-img-wrap {
+    order: 2 !important;
+    margin-top: 8px !important;
+  }
+
+  .hero-visual img,
+  .brand-hero-visual img,
+  .service-visual-img-wrap img,
+  .service-hero-media img,
+  .service-card-img {
+    max-height: 260px !important;
+    width: 100% !important;
+    object-fit: cover !important;
+    border-radius: 16px !important;
+  }
+}
