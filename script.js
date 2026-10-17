@@ -1,5 +1,5 @@
 /* ==========================================================================
-   مدير الصيانة - ملف التفاعلات (Main JavaScript)
+   البيت اللامع لخدمات النظافة والصيانة المنزلية العامة - ملف التفاعلات (Main JavaScript)
    ========================================================================== */
 
 (function () {
@@ -25,20 +25,31 @@
       }
     });
 
-    // Special category highlights for Services vs Coldair
+    // Special category highlights for Appliance Maintenance vs Cleaning & Pest Control
     const megaWrapper = document.getElementById('megaMenuWrapper');
-    const coldairWrapper = document.getElementById('coldairNavWrapper');
+    const cleaningWrapper = document.getElementById('cleaningNavWrapper');
 
-    if (currentFile === 'service-coldair.html') {
-      coldairWrapper?.classList.add('active');
+    if (
+      currentFile === 'service-marble-polishing.html' ||
+      currentFile === 'service-cleaning.html' ||
+      currentFile === 'service-tanks.html' ||
+      currentFile === 'service-upholstery.html' ||
+      currentFile === 'service-pest-control.html'
+    ) {
+      cleaningWrapper?.classList.add('active');
       megaWrapper?.classList.remove('active');
     } else if (
       currentFile === 'services.html' ||
       currentFile.startsWith('service-') ||
-      currentFile.startsWith('brand-')
+      currentFile.startsWith('brand-') ||
+      currentFile === 'cooling.html' ||
+      currentFile === 'cooking.html' ||
+      currentFile === 'dishwashers.html' ||
+      currentFile === 'dryers.html' ||
+      currentFile === 'heaters.html'
     ) {
       megaWrapper?.classList.add('active');
-      coldairWrapper?.classList.remove('active');
+      cleaningWrapper?.classList.remove('active');
     }
 
     // Mobile drawer links
@@ -58,7 +69,9 @@
     // Apply active navigation state
     syncActiveNavLinks();
 
-    // Mobile Drawer Elements
+    // -------------------------------------------------------------
+    // Mobile Drawer Navigation
+    // -------------------------------------------------------------
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const closeDrawerBtn = document.getElementById('closeDrawerBtn');
     const mobileDrawer = document.getElementById('mobileDrawer');
@@ -100,7 +113,6 @@
       }
     }
 
-    // Debounced safe toggle for mobile touch and click (prevents rapid double-triggering)
     let lastToggleTime = 0;
     function safeToggleDrawer(e) {
       const now = Date.now();
@@ -112,7 +124,6 @@
       toggleDrawer(e);
     }
 
-    // Direct element event bindings
     if (hamburgerBtn) {
       hamburgerBtn.addEventListener('click', safeToggleDrawer);
       hamburgerBtn.addEventListener('pointerup', (e) => {
@@ -141,7 +152,7 @@
       }, { passive: true });
     }
 
-    // Global document-level event delegation (foolproof safety net across all pages)
+    // Global document-level event delegation
     document.addEventListener('click', (e) => {
       const targetHamburger = e.target.closest('#hamburgerBtn, .hamburger-btn');
       if (targetHamburger) {
@@ -168,39 +179,18 @@
       }
     });
 
-    // Close drawer on Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && isDrawerOpen()) {
         closeDrawer();
       }
     });
 
-    // 2. Mobile Accordion for "الخدمات" in Drawer (Legacy & Dual)
-    const drawerServicesToggle = document.getElementById('drawerServicesToggle');
-    const drawerServicesPanel = document.getElementById('drawerServicesPanel');
-
-    if (drawerServicesToggle && drawerServicesPanel) {
-      drawerServicesToggle.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const isOpen = drawerServicesPanel.classList.toggle('open');
-        drawerServicesToggle.setAttribute('aria-expanded', String(isOpen));
-
-        const chevron = drawerServicesToggle.querySelector('.chevron');
-        if (chevron) {
-          chevron.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
-        }
-      });
-    }
-
-    // 3. Robust link navigation handling inside mobile drawer
+    // Mobile drawer link clicks
     document.querySelectorAll('.mobile-drawer a').forEach((link) => {
       link.addEventListener('click', (e) => {
         const href = link.getAttribute('href');
         if (!href) return;
 
-        // Skip tel:, mailto:, external protocols, and new-tab links
         if (
           href.startsWith('tel:') ||
           href.startsWith('mailto:') ||
@@ -211,7 +201,6 @@
           return;
         }
 
-        // Handle pure in-page hash links (e.g. #booking)
         if (href.startsWith('#')) {
           e.preventDefault();
           closeDrawer();
@@ -222,7 +211,6 @@
           return;
         }
 
-        // Handle same-page hash links (e.g. index.html#booking when on index.html)
         const currentPath = window.location.pathname.split('/').pop() || 'index.html';
         const [linkPage, linkHash] = href.split('#');
 
@@ -236,24 +224,72 @@
           return;
         }
 
-        // Standard multi-page navigation: close drawer and let browser navigate
         closeDrawer();
       });
     });
 
-    // 4. Dual-Path Mega Menu Controller (Desktop & Mobile)
+    // -------------------------------------------------------------
+    // Dropdown Hover Intent / Grace Delay (Fixes Hover Drop Bug)
+    // -------------------------------------------------------------
+    function setupDropdownHoverGrace(wrapperSelector, panelSelector) {
+      const wrapper = document.querySelector(wrapperSelector);
+      const panel = document.querySelector(panelSelector);
+      if (!wrapper || !panel) return;
+
+      let closeTimer = null;
+
+      function openMenu() {
+        if (closeTimer) {
+          clearTimeout(closeTimer);
+          closeTimer = null;
+        }
+        wrapper.classList.add('hover-active');
+        panel.classList.add('open');
+        panel.style.opacity = '1';
+        panel.style.visibility = 'visible';
+        panel.style.pointerEvents = 'auto';
+        panel.style.transform = 'translateY(0)';
+      }
+
+      function scheduleClose() {
+        if (closeTimer) clearTimeout(closeTimer);
+        closeTimer = setTimeout(() => {
+          wrapper.classList.remove('hover-active');
+          panel.classList.remove('open');
+          panel.style.opacity = '';
+          panel.style.visibility = '';
+          panel.style.pointerEvents = '';
+          panel.style.transform = '';
+          closeTimer = null;
+        }, 320); // 320ms generous buffer for smooth downward cursor travel
+      }
+
+      wrapper.addEventListener('mouseenter', openMenu);
+      wrapper.addEventListener('mouseleave', scheduleClose);
+      panel.addEventListener('mouseenter', openMenu);
+      panel.addEventListener('mouseleave', scheduleClose);
+    }
+
+    setupDropdownHoverGrace('#megaMenuWrapper', '#desktopMegaMenu');
+    setupDropdownHoverGrace('#cleaningNavWrapper', '#cleaningDropdownPanel');
+
+    // -------------------------------------------------------------
+    // Desktop Mega Menu Tabs (Appliance vs Brand vs Cleaning)
+    // -------------------------------------------------------------
     const tabApplianceTrigger = document.getElementById('tabApplianceTrigger');
     const tabBrandTrigger = document.getElementById('tabBrandTrigger');
+    const tabCleaningTrigger = document.getElementById('tabCleaningTrigger');
     const panelByAppliance = document.getElementById('panelByAppliance');
     const panelByBrand = document.getElementById('panelByBrand');
+    const panelByCleaning = document.getElementById('panelByCleaning');
 
     function switchDesktopMode(activeBtn, targetPanel) {
-      [tabApplianceTrigger, tabBrandTrigger].forEach((btn) => {
+      [tabApplianceTrigger, tabBrandTrigger, tabCleaningTrigger].forEach((btn) => {
         if (!btn) return;
         btn.classList.toggle('active', btn === activeBtn);
         btn.setAttribute('aria-selected', String(btn === activeBtn));
       });
-      [panelByAppliance, panelByBrand].forEach((panel) => {
+      [panelByAppliance, panelByBrand, panelByCleaning].forEach((panel) => {
         if (!panel) return;
         panel.classList.toggle('active', panel === targetPanel);
       });
@@ -269,18 +305,10 @@
       switchDesktopMode(tabBrandTrigger, panelByBrand);
     });
 
-    // 4b. Standalone Coldair Direct Navigation on Click
-    const coldairNavPill = document.querySelector('.coldair-nav-pill');
-    if (coldairNavPill) {
-      coldairNavPill.addEventListener('click', (e) => {
-        // If clicking call or WhatsApp buttons, let them trigger their own direct actions
-        if (e.target.closest('.coldair-pill-actions')) {
-          return;
-        }
-        // Direct navigation to Coldair service page
-        window.location.href = 'service-coldair.html';
-      });
-    }
+    tabCleaningTrigger?.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchDesktopMode(tabCleaningTrigger, panelByCleaning);
+    });
 
     // Master-Detail Category Switcher (Hover & Click)
     const applianceNavButtons = document.querySelectorAll('.appliance-nav-btn');
@@ -298,11 +326,9 @@
       const href = btn.getAttribute('data-href');
       btn.addEventListener('mouseenter', () => activateSubpanel(targetId, btn));
       btn.addEventListener('click', (e) => {
-        // If clicking the direct arrow link, allow native navigation
         if (e.target.closest('.category-direct-link')) {
           return;
         }
-        // If button is already active and user clicks it, navigate to dedicated category page
         if (btn.classList.contains('active') && href) {
           window.location.href = href;
           return;
@@ -312,23 +338,31 @@
       });
     });
 
-    // Mobile Segmented Tab Controller
+    // -------------------------------------------------------------
+    // Mobile Segmented Tab Controller (Appliances | Cleaning | Brands)
+    // -------------------------------------------------------------
     const mobTabApplianceBtn = document.getElementById('mobTabApplianceBtn');
+    const mobTabCleaningBtn = document.getElementById('mobTabCleaningBtn');
     const mobTabBrandBtn = document.getElementById('mobTabBrandBtn');
     const mobPanelAppliance = document.getElementById('mobPanelAppliance');
+    const mobPanelCleaning = document.getElementById('mobPanelCleaning');
     const mobPanelBrand = document.getElementById('mobPanelBrand');
 
     function switchMobileSegment(activeBtn, targetPanel) {
-      [mobTabApplianceBtn, mobTabBrandBtn].forEach((btn) => {
+      [mobTabApplianceBtn, mobTabCleaningBtn, mobTabBrandBtn].forEach((btn) => {
         btn?.classList.toggle('active', btn === activeBtn);
       });
-      [mobPanelAppliance, mobPanelBrand].forEach((panel) => {
+      [mobPanelAppliance, mobPanelCleaning, mobPanelBrand].forEach((panel) => {
         panel?.classList.toggle('active', panel === targetPanel);
       });
     }
 
     mobTabApplianceBtn?.addEventListener('click', () => {
       switchMobileSegment(mobTabApplianceBtn, mobPanelAppliance);
+    });
+
+    mobTabCleaningBtn?.addEventListener('click', () => {
+      switchMobileSegment(mobTabCleaningBtn, mobPanelCleaning);
     });
 
     mobTabBrandBtn?.addEventListener('click', () => {
@@ -350,14 +384,15 @@
       });
     });
 
+    // -------------------------------------------------------------
     // FAQ Accordion
+    // -------------------------------------------------------------
     document.querySelectorAll('.faq-question').forEach((btn) => {
       btn.addEventListener('click', () => {
         const item = btn.closest('.faq-item');
         if (!item) return;
         const isOpen = item.classList.contains('open');
 
-        // Close other open FAQs in same section
         const parent = item.parentElement;
         parent?.querySelectorAll('.faq-item.open').forEach((other) => {
           if (other !== item) other.classList.remove('open');
@@ -367,14 +402,16 @@
       });
     });
 
+    // -------------------------------------------------------------
     // Booking & Contact Forms Handling
-    const bookingForms = document.querySelectorAll('form[id*="booking"], form[id*="contact"]');
+    // -------------------------------------------------------------
+    const bookingForms = document.querySelectorAll('form[id*="booking"], form[id*="contact"], form[id*="Form"]');
     bookingForms.forEach((form) => {
       form.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const nameInput = form.querySelector('input[name="name"], input[id*="name"]');
-        const phoneInput = form.querySelector('input[name="phone"], input[id*="phone"]');
+        const nameInput = form.querySelector('input[name="name"], input[id*="name"], input[id*="Name"]');
+        const phoneInput = form.querySelector('input[name="phone"], input[id*="phone"], input[id*="Phone"]');
 
         if (nameInput && !nameInput.value.trim()) {
           alert('يرجى إدخال الاسم الكريم.');
@@ -397,10 +434,10 @@
 
         feedback.innerHTML = `
           <strong>تم استلام بيانات طلبك بنجاح!</strong><br>
-          سيتواصل معك ممثل خدمة العملاء في أقرب وقت لتأكيد الموعد والعطل.<br>
+          سيتواصل معك ممثل خدمة العملاء في أقرب وقت لتأكيد الموعد ونوع الخدمة.<br>
           للحصول على خدمة فورية الآن، يمكنك الاتصال مباشرة على: 
-          <a href="tel:+2010XXXXXXXX" style="color:#c8102e;font-weight:bold;">010-XXXX-XXXX</a> أو مراسلتنا عبر 
-          <a href="https://wa.me/2010XXXXXXXX" target="_blank" rel="noopener" style="color:#25d366;font-weight:bold;">واتساب</a>.
+          <a href="tel:0570406738" style="color:#059669;font-weight:bold;">0570406738</a> أو مراسلتنا عبر 
+          <a href="https://wa.me/966570406738" target="_blank" rel="noopener" style="color:#25d366;font-weight:bold;">واتساب</a>.
         `;
         feedback.style.display = 'block';
         form.reset();
@@ -408,7 +445,6 @@
     });
   }
 
-  // Support Web Component <site-navbar> & placeholder dynamic injection
   function checkDynamicNavbar(callback) {
     const placeholder = document.querySelector('site-navbar, #navbar-placeholder, [data-navbar-placeholder]');
     if (placeholder && placeholder.innerHTML.trim() === '') {
@@ -422,7 +458,7 @@
           callback();
         })
         .catch((err) => {
-          console.warn('Dynamic navbar fetch skipped (running locally or network error):', err);
+          console.warn('Dynamic navbar fetch skipped:', err);
           callback();
         });
     } else {
