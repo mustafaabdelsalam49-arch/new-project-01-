@@ -229,51 +229,6 @@
     });
 
     // -------------------------------------------------------------
-    // Dropdown Hover Intent / Grace Delay (Fixes Hover Drop Bug)
-    // -------------------------------------------------------------
-    function setupDropdownHoverGrace(wrapperSelector, panelSelector) {
-      const wrapper = document.querySelector(wrapperSelector);
-      const panel = document.querySelector(panelSelector);
-      if (!wrapper || !panel) return;
-
-      let closeTimer = null;
-
-      function openMenu() {
-        if (closeTimer) {
-          clearTimeout(closeTimer);
-          closeTimer = null;
-        }
-        wrapper.classList.add('hover-active');
-        panel.classList.add('open');
-        panel.style.opacity = '1';
-        panel.style.visibility = 'visible';
-        panel.style.pointerEvents = 'auto';
-        panel.style.transform = 'translateY(0)';
-      }
-
-      function scheduleClose() {
-        if (closeTimer) clearTimeout(closeTimer);
-        closeTimer = setTimeout(() => {
-          wrapper.classList.remove('hover-active');
-          panel.classList.remove('open');
-          panel.style.opacity = '';
-          panel.style.visibility = '';
-          panel.style.pointerEvents = '';
-          panel.style.transform = '';
-          closeTimer = null;
-        }, 320); // 320ms generous buffer for smooth downward cursor travel
-      }
-
-      wrapper.addEventListener('mouseenter', openMenu);
-      wrapper.addEventListener('mouseleave', scheduleClose);
-      panel.addEventListener('mouseenter', openMenu);
-      panel.addEventListener('mouseleave', scheduleClose);
-    }
-
-    setupDropdownHoverGrace('#megaMenuWrapper', '#desktopMegaMenu');
-    setupDropdownHoverGrace('#cleaningNavWrapper', '#cleaningDropdownPanel');
-
-    // -------------------------------------------------------------
     // Desktop Mega Menu Tabs (Appliance vs Brand vs Cleaning)
     // -------------------------------------------------------------
     const tabApplianceTrigger = document.getElementById('tabApplianceTrigger');
@@ -309,6 +264,121 @@
       e.preventDefault();
       switchDesktopMode(tabCleaningTrigger, panelByCleaning);
     });
+
+    // -------------------------------------------------------------
+    // Desktop Navigation Dropdowns: Mutual Exclusion & Grace Delay
+    // Prevents conflicting active states between Appliance Mega Menu & Cleaning Dropdown
+    // -------------------------------------------------------------
+    const megaWrapper = document.querySelector('#megaMenuWrapper');
+    const megaPanel = document.querySelector('#desktopMegaMenu');
+    const cleanWrapper = document.querySelector('#cleaningNavWrapper');
+    const cleanPanel = document.querySelector('#cleaningDropdownPanel');
+
+    let megaCloseTimer = null;
+    let cleanCloseTimer = null;
+
+    function openMega() {
+      if (cleanCloseTimer) {
+        clearTimeout(cleanCloseTimer);
+        cleanCloseTimer = null;
+      }
+      closeCleanImmediate();
+
+      if (megaCloseTimer) {
+        clearTimeout(megaCloseTimer);
+        megaCloseTimer = null;
+      }
+      if (megaWrapper && megaPanel) {
+        megaWrapper.classList.add('hover-active');
+        megaPanel.classList.add('open');
+        megaPanel.style.opacity = '1';
+        megaPanel.style.visibility = 'visible';
+        megaPanel.style.pointerEvents = 'auto';
+        megaPanel.style.transform = 'translateY(0)';
+      }
+    }
+
+    function scheduleCloseMega() {
+      if (megaCloseTimer) clearTimeout(megaCloseTimer);
+      megaCloseTimer = setTimeout(() => {
+        closeMegaImmediate();
+        if (tabApplianceTrigger && panelByAppliance) {
+          switchDesktopMode(tabApplianceTrigger, panelByAppliance);
+        }
+      }, 250);
+    }
+
+    function closeMegaImmediate() {
+      if (megaCloseTimer) {
+        clearTimeout(megaCloseTimer);
+        megaCloseTimer = null;
+      }
+      if (megaWrapper && megaPanel) {
+        megaWrapper.classList.remove('hover-active');
+        megaPanel.classList.remove('open');
+        megaPanel.style.opacity = '';
+        megaPanel.style.visibility = '';
+        megaPanel.style.pointerEvents = '';
+        megaPanel.style.transform = '';
+      }
+    }
+
+    function openClean() {
+      if (megaCloseTimer) {
+        clearTimeout(megaCloseTimer);
+        megaCloseTimer = null;
+      }
+      closeMegaImmediate();
+
+      if (cleanCloseTimer) {
+        clearTimeout(cleanCloseTimer);
+        cleanCloseTimer = null;
+      }
+      if (cleanWrapper && cleanPanel) {
+        cleanWrapper.classList.add('hover-active');
+        cleanPanel.classList.add('open');
+        cleanPanel.style.opacity = '1';
+        cleanPanel.style.visibility = 'visible';
+        cleanPanel.style.pointerEvents = 'auto';
+        cleanPanel.style.transform = 'translateY(0)';
+      }
+    }
+
+    function scheduleCloseClean() {
+      if (cleanCloseTimer) clearTimeout(cleanCloseTimer);
+      cleanCloseTimer = setTimeout(() => {
+        closeCleanImmediate();
+      }, 250);
+    }
+
+    function closeCleanImmediate() {
+      if (cleanCloseTimer) {
+        clearTimeout(cleanCloseTimer);
+        cleanCloseTimer = null;
+      }
+      if (cleanWrapper && cleanPanel) {
+        cleanWrapper.classList.remove('hover-active');
+        cleanPanel.classList.remove('open');
+        cleanPanel.style.opacity = '';
+        cleanPanel.style.visibility = '';
+        cleanPanel.style.pointerEvents = '';
+        cleanPanel.style.transform = '';
+      }
+    }
+
+    if (megaWrapper && megaPanel) {
+      megaWrapper.addEventListener('mouseenter', openMega);
+      megaWrapper.addEventListener('mouseleave', scheduleCloseMega);
+      megaPanel.addEventListener('mouseenter', openMega);
+      megaPanel.addEventListener('mouseleave', scheduleCloseMega);
+    }
+
+    if (cleanWrapper && cleanPanel) {
+      cleanWrapper.addEventListener('mouseenter', openClean);
+      cleanWrapper.addEventListener('mouseleave', scheduleCloseClean);
+      cleanPanel.addEventListener('mouseenter', openClean);
+      cleanPanel.addEventListener('mouseleave', scheduleCloseClean);
+    }
 
     // Master-Detail Category Switcher (Hover & Click)
     const applianceNavButtons = document.querySelectorAll('.appliance-nav-btn');
