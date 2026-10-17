@@ -4196,3 +4196,141 @@ textarea.form-control {
     border-radius: 16px !important;
   }
 }
+
+
+/* ==========================================================================
+   MASTER OVERHAUL: CTA BANNERS, 3-COLUMN SERVICES GRID & MEGA-MENU CARDS
+   ========================================================================== */
+
+/* 1. Force bright white headings in all dark CTA banners */
+.cta-box h1,
+.cta-box h2,
+.cta-box h3,
+.cta-box h4,
+.cta-banner h1,
+.cta-banner h2,
+.cta-banner h3,
+.cta-banner h4,
+.cta-section h1,
+.cta-section h2,
+.cta-section h3,
+.cta-section h4,
+.dark-banner h1,
+.dark-banner h2,
+.dark-banner h3,
+.dark-banner h4,
+[class*="cta-box"] h1,
+[class*="cta-box"] h2,
+[class*="cta-box"] h3,
+[class*="cta-box"] h4,
+[class*="cta"] h1,
+[class*="cta"] h2,
+[class*="cta"] h3,
+.cta-title {
+  color: #ffffff !important;
+}
+
+.cta-box p,
+.cta-banner p,
+.cta-section p,
+.dark-banner p,
+[class*="cta-box"] p {
+  color: #e2e8f0 !important;
+}
+
+/* 2. Expansive 3-column Services Grid across full container width */
+.services-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(280px, 1fr)) !important;
+  gap: 24px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 1100px) {
+  .services-grid {
+    grid-template-columns: repeat(2, minmax(260px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .services-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* 3. Mega-Menu Cleaning Grid 3-Column Width on Desktop */
+#panelByCleaning .cleaning-showcase-grid,
+.mega-menu .cleaning-showcase-grid,
+.mega-cleaning-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(280px, 1fr)) !important;
+  gap: 16px !important;
+  width: 100% !important;
+}
+
+@media (max-width: 1100px) {
+  #panelByCleaning .cleaning-showcase-grid,
+  .mega-menu .cleaning-showcase-grid,
+  .mega-cleaning-grid {
+    grid-template-columns: repeat(2, minmax(240px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #panelByCleaning .cleaning-showcase-grid,
+  .mega-menu .cleaning-showcase-grid,
+  .mega-cleaning-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* 4. Force dark text inside all service cards and mega-menu cards */
+.service-card,
+.cleaning-card-item,
+.dropdown-service-card,
+.mega-cleaning-card,
+#panelByCleaning .cleaning-card-item {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+.service-card h2,
+.service-card h2 a,
+.service-card h3,
+.service-card h3 a,
+.service-card h4,
+.service-card h4 a,
+.service-card-title,
+.service-card-title a,
+.cleaning-card-meta strong,
+.dropdown-service-card strong,
+.mega-cleaning-card strong {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+
+.service-card-desc,
+.service-card p,
+.cleaning-card-meta small,
+.dropdown-service-card small,
+.mega-cleaning-card p {
+  color: #334155 !important;
+  font-weight: 500 !important;
+}
+
+/* 5. Mobile text-first layout ordering (<= 991px) */
+@media (max-width: 991px) {
+  .hero-content,
+  .brand-hero-text,
+  .service-visual-info {
+    order: 1 !important;
+  }
+
+  .hero-visual,
+  .brand-hero-visual,
+  .service-visual-img-wrap {
+    order: 2 !important;
+    margin-top: 14px !important;
+  }
+}
